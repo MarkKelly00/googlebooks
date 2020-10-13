@@ -24,7 +24,9 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/gBooks", {
   useCreateIndex: true,
   useUnifiedTopology: true,
   useFindAndModify: false
-});
+})
+  .then(() => console.log("Database Connected Successfully"))
+  .catch(err => console.log(err));
 
 app.get("*", (req, res) => {
   res.sendFile(Path.join(__dirname, "/client/build/index.html"));

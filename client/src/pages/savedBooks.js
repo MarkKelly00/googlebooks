@@ -1,79 +1,49 @@
 import React, { useEffect, useState } from "react";
-import Jumbotron from "../components/Jumbotron";
 import DeleteBtn from "../components/DeleteBtn";
+import FooterPage from "../components/Footer/Footer";
 
 import API from "../utils/API";
-import { Col, Row, Container } from "../components/Grid";
+import { Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
 
 function SavedBooks() {
-  // Setting our component's initial state
   const [books, setBooks] = useState([])
 
+  useEffect(() => {
+   getBooks()
+  }, [])
 
-  // Loads all books and sets them to books
-  function handleBookSearch(event) {
-    event.preventDefault();
-    const book = event.target.search.value;
+  const getBooks = () => {
+    API.getBooks().then(books => setBooks([...books.data]))
+  }
+  const handleClick = (id) => {
+    API.deleteBook(id).then(() => getBooks())
 
-    API.searchBooks(book)
-      .then(res => {
-        console.log(res.data);
-        setBooks(res.data.items)
-      })
-      .catch(err => console.log(err));
-  };
+  }
 
+console.log(books)
 
     return (
-      <Container fluid>
-        <Row>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>Google Book Search</h1>
-            </Jumbotron>
-            <form onSubmit={handleBookSearch}>
-              <Input
-                onChange={() => {}}
-                name="search"
-                placeholder="Search"
-              />
-              <FormBtn
-                onClick={() => {}}
-                type="submit"
-              >
-                Search
-              </FormBtn>
-            </form>
-          </Col>
-          <Col size="md-6 sm-12">
+      <Container size="md-6 sm-12">
             {books.length ? (
               <List>
                 {books.map(book => {
                   return (
-                    <ListItem key={book.id}>
+                    <ListItem key={book._id}>
                       <a href={"/books/" + book._id}>
-                      <img src={book.volumeInfo.imageLinks.thumbnail} />
+                      <img className="mx-auto d-block" src={book.image} />
                       <br />
                         <strong>
-                          {book.volumeInfo.title} by {book.volumeInfo.authors}
+                        <div className="text-center">
+                          {book.title} by {book.author}
+                          </div>
                         </strong>
                       </a>
                       <p>
-                        {book.volumeInfo.description}
+                        {book.description}
                       </p>
-                      <button onClick={() => {
-                        API.saveBook({
-                          title: book.volumeInfo.title,
-                          authors: book.volumeInfo.authors,
-                          description: book.volumeInfo.description,
-                          image: book.volumeInfo.thumbnail,
-                          link: book.selfLink,
-                        })
-                      }}>
-                        Save
-                      </button>
+                      
+                    <DeleteBtn onClick={()  => handleClick(book._id)} />
                     </ListItem>
                   );
                 })}
@@ -81,8 +51,7 @@ function SavedBooks() {
             ) : (
               <h3>No Results to Display</h3>
             )}
-          </Col>
-        </Row>
+            <FooterPage />
       </Container>
     );
   }

@@ -5,8 +5,10 @@ import "./style.css";
 
 export function List({ children }) {
   return (
-    <div className="list-overflow-container">
+    <div className="col-lg-12">
+    <div className="col-md-12 list-overflow-container">
       <ul className="list-group">{children}</ul>
+    </div>
     </div>
 
   );

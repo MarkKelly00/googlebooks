@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Jumbotron from "../components/Jumbotron";
-import DeleteBtn from "../components/DeleteBtn";
+import FooterPage from "../components/Footer/Footer";
 
 import API from "../utils/API";
-import { Col, Row, Container } from "../components/Grid";
+import { Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
+import { Input, FormBtn } from "../components/Form";
+import SaveBtn from "../components/SaveBtn/saveBtn";
 
 function Books() {
   // Setting our component's initial state
@@ -28,11 +29,9 @@ function Books() {
 
 
     return (
-      <Container fluid>
-        <Row>
-          <Col size="md-6">
+      <Container lg>
             <Jumbotron>
-              <h1>Google Book Search</h1>
+              <h1 className="display-5 text-info text-wrap">Google Book Search</h1>
             </Jumbotron>
             <form onSubmit={handleBookSearch}>
               <Input
@@ -47,34 +46,35 @@ function Books() {
                 Search
               </FormBtn>
             </form>
-          </Col>
-          <Col size="md-6 sm-12">
+            <Row>
             {books.length ? (
               <List>
                 {books.map(book => {
                   return (
                     <ListItem key={book.id}>
                       <a href={"/books/" + book._id}>
-                      <img src={book.volumeInfo.imageLinks.thumbnail} />
+                      <img className="mx-auto d-block" src={book.volumeInfo.imageLinks.thumbnail} />
                       <br />
                         <strong>
+                          <div className="text-center">
                           {book.volumeInfo.title} by {book.volumeInfo.authors}
+                          </div>
                         </strong>
                       </a>
                       <p>
                         {book.volumeInfo.description}
                       </p>
-                      <button onClick={() => {
+                      <SaveBtn onClick={() => {
                         API.saveBook({
                           title: book.volumeInfo.title,
-                          authors: book.volumeInfo.authors,
+                          author: book.volumeInfo.authors,
                           description: book.volumeInfo.description,
-                          image: book.volumeInfo.thumbnail,
+                          image: book.volumeInfo.imageLinks.thumbnail,
                           link: book.selfLink,
                         })
                       }}>
                         Save
-                      </button>
+                      </SaveBtn>
                     </ListItem>
                   );
                 })}
@@ -82,9 +82,10 @@ function Books() {
             ) : (
               <h3>No Results to Display</h3>
             )}
-          </Col>
         </Row>
+        <FooterPage />
       </Container>
+      
     );
   }
 
